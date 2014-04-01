@@ -260,7 +260,7 @@ public class CoreWorkload extends Workload
 	
 	IntegerGenerator keysequence;
 
-	DiscreteGenerator operationchooser;
+	public DiscreteGenerator operationchooser;
 
 	IntegerGenerator keychooser;
 
