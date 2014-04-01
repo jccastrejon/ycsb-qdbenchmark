@@ -46,7 +46,7 @@ public class DBFactory
 	 
 	 ret.setProperties(properties);
 
-	 return new DBWrapper(ret);
+	 return new fr.imag.qdbenchmark.DBWrapper(ret);
       }
       
 }

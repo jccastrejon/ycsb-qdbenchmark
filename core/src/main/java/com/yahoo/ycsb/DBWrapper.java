@@ -29,8 +29,8 @@ import com.yahoo.ycsb.measurements.Measurements;
  */
 public class DBWrapper extends DB
 {
-	DB _db;
-	Measurements _measurements;
+	public DB _db;
+	public Measurements _measurements;
 
 	public DBWrapper(DB db)
 	{
