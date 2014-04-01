@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/cassandra/cassandra-all/0.7.0/cassandra-all-0.7.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/google/guava/guava/r05/guava-r05.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.1/commons-cli-1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.2/commons-codec-1.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" sourcepath="M2_REPO/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4.jar" sourcepath="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/googlecode/concurrentlinkedhashmap/concurrentlinkedhashmap-lru/1.1/concurrentlinkedhashmap-lru-1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/jetty/6.1.21/jetty-6.1.21.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/jetty-util/6.1.21/jetty-util-6.1.21.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/servlet-api/2.5-20081211/servlet-api-2.5-20081211.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/antlr/antlr/3.1.3/antlr-3.1.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/antlr/antlr-runtime/3.1.3/antlr-runtime-3.1.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/antlr/stringtemplate/3.2/stringtemplate-3.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6.jar" sourcepath="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.jar" sourcepath="M2_REPO/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/jackson/jackson-core-asl/1.4.0/jackson-core-asl-1.4.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/jackson/jackson-mapper-asl/1.4.0/jackson-mapper-asl-1.4.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/jline/jline/0.9.94/jline-0.9.94.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/googlecode/json-simple/json-simple/1.1/json-simple-1.1.jar" sourcepath="M2_REPO/com/googlecode/json-simple/json-simple/1.1/json-simple-1.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/github/stephenc/high-scale-lib/high-scale-lib/1.1.1/high-scale-lib-1.1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.6/snakeyaml-1.6.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/safehaus/jug/jug/2.0.0/jug-2.0.0-asl.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/cassandra/deps/avro/1.4.0-cassandra-1/avro-1.4.0-cassandra-1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/cassandra/deps/libthrift/0.5.0/libthrift-0.5.0.jar"/>
+  <classpathentry kind="src" path="/core"/>
+  <classpathentry kind="var" path="M2_REPO/checkstyle/checkstyle/5.0/checkstyle-5.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-beanutils/commons-beanutils-core/1.7.0/commons-beanutils-core-1.7.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.0.3/commons-logging-1.0.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/google/collections/google-collections/1.0/google-collections-1.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jdom/jdom/1.1/jdom-1.1.jar"/>
+</classpath>
