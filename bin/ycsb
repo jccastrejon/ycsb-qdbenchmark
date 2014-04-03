@@ -21,6 +21,11 @@ COMMANDS = {
         "description" : "Execute the transaction phase",
         "main"        : "com.yahoo.ycsb.Client",
     },
+    "run-qdbenchmark" : {
+        "command"     : "-t",
+        "description" : "Execute the transaction phase",
+        "main"        : "fr.imag.qdbenchmark.Client",
+    }
 }
 
 DATABASES = {
@@ -37,6 +42,7 @@ DATABASES = {
     "jdbc"         : "com.yahoo.ycsb.db.JdbcDBClient",
     "mapkeeper"    : "com.yahoo.ycsb.db.MapKeeperClient",
     "mongodb"      : "com.yahoo.ycsb.db.MongoDbClient",
+    "mongodb-qdbenchmark"      : "fr.imag.qdbenchmark.db.MongoDbClient",
     "nosqldb"      : "com.yahoo.ycsb.db.NoSqlDbClient",
     "orientdb"     : "com.yahoo.ycsb.db.OrientDBClient",
     "redis"        : "com.yahoo.ycsb.db.RedisClient", 

@@ -24,8 +24,8 @@ public class CoreWorkload extends com.yahoo.ycsb.workloads.CoreWorkload {
 	@Override
 	public void init(final Properties properties) throws WorkloadException {
 		super.init(properties);
-		operations = OperationGroup.valueOf(properties.getProperty(OPERATIONS_PROPERTY,
-				OperationGroup.KeyOperations.toString()));
+		operations = OperationGroup.valueOf(properties.getProperty(
+				OPERATIONS_PROPERTY, OperationGroup.KeyOperations.toString()));
 	}
 
 	@Override

@@ -392,7 +392,7 @@ public class Client
 	 * loaded from conf.
 	 * @throws IOException Either failed to write to output stream or failed to close it.
 	 */
-	private static void exportMeasurements(Properties props, int opcount, long runtime)
+	protected static void exportMeasurements(Properties props, int opcount, long runtime)
 			throws IOException
 	{
 		MeasurementsExporter exporter = null;
@@ -726,7 +726,7 @@ public class Client
 				System.exit(0);
 			}
 
-			Thread t=new ClientThread(db,dotransactions,workload,threadid,threadcount,props,opcount/threadcount,targetperthreadperms);
+			Thread t=getClientThread(db,dotransactions,workload,threadid,threadcount,props,opcount/threadcount,targetperthreadperms);
 
 			threads.add(t);
 			//t.start();
@@ -806,5 +806,9 @@ public class Client
 		}
 
 		System.exit(0);
+	}
+	
+	static Thread getClientThread(DB db, boolean dotransactions, Workload workload, int threadid, int threadcount, Properties props, int opcount, double targetperthreadperms) {
+		return new ClientThread(db, dotransactions, workload, threadid, threadcount, props, opcount, targetperthreadperms);
 	}
 }
