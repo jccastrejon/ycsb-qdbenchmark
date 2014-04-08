@@ -41,7 +41,7 @@ public abstract class OneMeasurement {
 
 	public abstract void reportReturnCode(int code);
 
-	public abstract void measure(int latency);
+	public abstract void measure(double latency);
 
 	public abstract String getSummary();
 

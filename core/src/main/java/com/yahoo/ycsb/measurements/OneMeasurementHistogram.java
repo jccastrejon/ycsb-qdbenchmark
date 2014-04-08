@@ -46,8 +46,8 @@ public class OneMeasurementHistogram extends OneMeasurement
 	int windowoperations;
 	long windowtotallatency;
 	
-	int min;
-	int max;
+	double min;
+	double max;
 	HashMap<Integer,int[]> returncodes;
 
 	public OneMeasurementHistogram(String name, Properties props)
@@ -84,7 +84,7 @@ public class OneMeasurementHistogram extends OneMeasurement
 	/* (non-Javadoc)
 	 * @see com.yahoo.ycsb.OneMeasurement#measure(int)
 	 */
-	public synchronized void measure(int latency)
+	public synchronized void measure(double latency)
 	{
 		if (latency/1000>=_buckets)
 		{
@@ -92,7 +92,7 @@ public class OneMeasurementHistogram extends OneMeasurement
 		}
 		else
 		{
-			histogram[latency/1000]++;
+			histogram[(int)latency/1000]++;
 		}
 		operations++;
 		totallatency+=latency;

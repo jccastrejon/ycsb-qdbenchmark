@@ -56,10 +56,10 @@ public class Measurements
 		return singleton;
 	}
 
-	HashMap<String,OneMeasurement> data;
+	public HashMap<String,OneMeasurement> data;
 	boolean histogram=true;
 
-	private Properties _props;
+	public Properties _props;
 	
       /**
        * Create a new object with the specified properties.
@@ -95,7 +95,7 @@ public class Measurements
       /**
        * Report a single value of a single metric. E.g. for read latency, operation="READ" and latency is the measured value.
        */
-	public synchronized void measure(String operation, int latency)
+	public synchronized void measure(String operation, double latency)
 	{
 		if (!data.containsKey(operation))
 		{

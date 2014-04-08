@@ -65,8 +65,8 @@ public class OneMeasurementTimeSeries extends OneMeasurement
 	int windowoperations=0;
 	long windowtotallatency=0;
 	
-	int min=-1;
-	int max=-1;
+	double min=-1;
+	double max=-1;
 
 	private HashMap<Integer, int[]> returncodes;
 	
@@ -103,7 +103,7 @@ public class OneMeasurementTimeSeries extends OneMeasurement
 	}
 	
 	@Override
-	public void measure(int latency) 
+	public void measure(double latency) 
 	{
 		checkEndOfUnit(false);
 		
