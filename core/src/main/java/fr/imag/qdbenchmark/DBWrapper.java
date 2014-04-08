@@ -1,5 +1,7 @@
 package fr.imag.qdbenchmark;
 
+import org.hyperic.sigar.Sigar;
+
 import fr.imag.qdbenchmark.dsl.Attribute;
 import fr.imag.qdbenchmark.dsl.Relationship_;
 import fr.imag.qdbenchmark.dsl.Struct_;
@@ -15,6 +17,8 @@ import fr.imag.qdbenchmark.operations.KeyOperations;
 public class DBWrapper extends com.yahoo.ycsb.DBWrapper implements
 		KeyOperations, AggregateOperations, ConnectionOperations {
 
+	private static Sigar sigar = new Sigar();
+
 	public DBWrapper(com.yahoo.ycsb.DB db) {
 		super(db);
 	}
@@ -25,6 +29,7 @@ public class DBWrapper extends com.yahoo.ycsb.DBWrapper implements
 		int res = ((ConnectionOperations) _db).read(relationship);
 		long en = System.nanoTime();
 		_measurements.measure("READ", (int) ((en - st) / 1000));
+		_measurements.measure("USED_MEMORY", DBWrapper.getActualUsedMemory());
 		_measurements.reportReturnCode("READ", res);
 		return res;
 	}
@@ -35,6 +40,7 @@ public class DBWrapper extends com.yahoo.ycsb.DBWrapper implements
 		int res = ((ConnectionOperations) _db).insert(relationship);
 		long en = System.nanoTime();
 		_measurements.measure("INSERT", (int) ((en - st) / 1000));
+		_measurements.measure("USED_MEMORY", DBWrapper.getActualUsedMemory());
 		_measurements.reportReturnCode("INSERT", res);
 		return res;
 	}
@@ -47,6 +53,7 @@ public class DBWrapper extends com.yahoo.ycsb.DBWrapper implements
 				newRelationship);
 		long en = System.nanoTime();
 		_measurements.measure("UPDATE", (int) ((en - st) / 1000));
+		_measurements.measure("USED_MEMORY", DBWrapper.getActualUsedMemory());
 		_measurements.reportReturnCode("UPDATE", res);
 		return res;
 	}
@@ -57,6 +64,7 @@ public class DBWrapper extends com.yahoo.ycsb.DBWrapper implements
 		int res = ((ConnectionOperations) _db).delete(relationship);
 		long en = System.nanoTime();
 		_measurements.measure("DELETE", (int) ((en - st) / 1000));
+		_measurements.measure("USED_MEMORY", DBWrapper.getActualUsedMemory());
 		_measurements.reportReturnCode("DELETE", res);
 		return res;
 	}
@@ -67,6 +75,7 @@ public class DBWrapper extends com.yahoo.ycsb.DBWrapper implements
 		int res = ((AggregateOperations) _db).read(pattern);
 		long en = System.nanoTime();
 		_measurements.measure("READ", (int) ((en - st) / 1000));
+		_measurements.measure("USED_MEMORY", DBWrapper.getActualUsedMemory());
 		_measurements.reportReturnCode("READ", res);
 		return res;
 	}
@@ -77,6 +86,7 @@ public class DBWrapper extends com.yahoo.ycsb.DBWrapper implements
 		int res = ((AggregateOperations) _db).insert(value);
 		long en = System.nanoTime();
 		_measurements.measure("INSERT", (int) ((en - st) / 1000));
+		_measurements.measure("USED_MEMORY", DBWrapper.getActualUsedMemory());
 		_measurements.reportReturnCode("INSERT", res);
 		return res;
 	}
@@ -87,6 +97,7 @@ public class DBWrapper extends com.yahoo.ycsb.DBWrapper implements
 		int res = ((AggregateOperations) _db).update(pattern, value);
 		long en = System.nanoTime();
 		_measurements.measure("UPDATE", (int) ((en - st) / 1000));
+		_measurements.measure("USED_MEMORY", DBWrapper.getActualUsedMemory());
 		_measurements.reportReturnCode("UPDATE", res);
 		return res;
 	}
@@ -97,6 +108,7 @@ public class DBWrapper extends com.yahoo.ycsb.DBWrapper implements
 		int res = ((AggregateOperations) _db).delete(pattern);
 		long en = System.nanoTime();
 		_measurements.measure("DELETE", (int) ((en - st) / 1000));
+		_measurements.measure("USED_MEMORY", DBWrapper.getActualUsedMemory());
 		_measurements.reportReturnCode("DELETE", res);
 		return res;
 	}
@@ -107,6 +119,7 @@ public class DBWrapper extends com.yahoo.ycsb.DBWrapper implements
 		int res = ((KeyOperations) _db).read(key);
 		long en = System.nanoTime();
 		_measurements.measure("READ", (int) ((en - st) / 1000));
+		_measurements.measure("USED_MEMORY", DBWrapper.getActualUsedMemory());
 		_measurements.reportReturnCode("READ", res);
 		return res;
 	}
@@ -117,6 +130,7 @@ public class DBWrapper extends com.yahoo.ycsb.DBWrapper implements
 		int res = ((KeyOperations) _db).insert(key, value);
 		long en = System.nanoTime();
 		_measurements.measure("INSERT", (int) ((en - st) / 1000));
+		_measurements.measure("USED_MEMORY", DBWrapper.getActualUsedMemory());
 		_measurements.reportReturnCode("INSERT", res);
 		return res;
 	}
@@ -127,7 +141,24 @@ public class DBWrapper extends com.yahoo.ycsb.DBWrapper implements
 		int res = ((KeyOperations) _db).update(key, value);
 		long en = System.nanoTime();
 		_measurements.measure("UPDATE", (int) ((en - st) / 1000));
+		_measurements.measure("USED_MEMORY", DBWrapper.getActualUsedMemory());
 		_measurements.reportReturnCode("UPDATE", res);
 		return res;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private static int getActualUsedMemory() {
+		int returnValue;
+
+		try {
+			returnValue = (int) sigar.getMem().getActualUsed() / 1024 / 1024;
+		} catch (Exception e) {
+			returnValue = 0;
+		}
+
+		return returnValue;
 	}
 }
