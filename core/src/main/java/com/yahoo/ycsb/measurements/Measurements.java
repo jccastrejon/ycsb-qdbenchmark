@@ -57,7 +57,7 @@ public class Measurements
 	}
 
 	public HashMap<String,OneMeasurement> data;
-	boolean histogram=true;
+	boolean histogram=false;
 
 	public Properties _props;
 	
@@ -82,14 +82,14 @@ public class Measurements
 	
 	OneMeasurement constructOneMeasurement(String name)
 	{
-		if (histogram)
-		{
-			return new OneMeasurementHistogram(name,_props);
-		}
-		else
-		{
+		//if (histogram)
+		//{
+		//	return new OneMeasurementHistogram(name,_props);
+		//}
+		//else
+		//{
 			return new OneMeasurementTimeSeries(name,_props);
-		}
+		//}
 	}
 
       /**
