@@ -1,7 +1,12 @@
 package fr.imag.qdbenchmark;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,6 +23,8 @@ import com.yahoo.ycsb.Utils;
 import com.yahoo.ycsb.Workload;
 import com.yahoo.ycsb.WorkloadException;
 import com.yahoo.ycsb.measurements.Measurements;
+import com.yahoo.ycsb.measurements.exporter.MeasurementsExporter;
+import com.yahoo.ycsb.measurements.exporter.TextMeasurementsExporter;
 
 /**
  * 
@@ -27,6 +34,7 @@ import com.yahoo.ycsb.measurements.Measurements;
 public class Client extends com.yahoo.ycsb.Client {
 
 	public static final String OPERATION_DOWN_PROPERTY = "operationdown";
+	public static final String OPERATION_UP_PROPERTY = "operationup";
 
 	class StatusThread extends Thread {
 		Vector<Thread> _threads;
@@ -136,6 +144,8 @@ public class Client extends com.yahoo.ycsb.Client {
 		Properties _props;
 
 		int _opsdown;
+		int _opsup;
+		MeasurementsExporter _exporter;
 
 		/**
 		 * Constructor.
@@ -157,8 +167,9 @@ public class Client extends com.yahoo.ycsb.Client {
 		 * @param targetperthreadperms
 		 *            target number of operations per thread per ms
 		 */
-		public ClientThread(DB db, boolean dotransactions, Workload workload,
-				int threadid, int threadcount, Properties props, int opcount,
+		public ClientThread(MeasurementsExporter exporter, DB db,
+				boolean dotransactions, Workload workload, int threadid,
+				int threadcount, Properties props, int opcount,
 				double targetperthreadperms) {
 			// TODO: consider removing threadcount and threadid
 			_db = db;
@@ -172,6 +183,9 @@ public class Client extends com.yahoo.ycsb.Client {
 			_props = props;
 			_opsdown = props.containsKey(OPERATION_DOWN_PROPERTY) ? Integer
 					.parseInt(props.getProperty(OPERATION_DOWN_PROPERTY)) : -1;
+			_opsup = props.containsKey(OPERATION_UP_PROPERTY) ? Integer
+					.parseInt(props.getProperty(OPERATION_UP_PROPERTY)) : -1;
+			_exporter = exporter;
 			// System.out.println("Interval = "+interval);
 		}
 
@@ -220,8 +234,29 @@ public class Client extends com.yahoo.ycsb.Client {
 
 						if (_opsdown > 0) {
 							if (_opsdone == _opsdown) {
-								System.out.println("Please shut down a subset of the running servers and press any key...");
-								System.in.read();
+								_exporter.write("NODE_DOWN_OPERATION", "",
+										_opsdone);
+								_exporter.write("NODE_DOWN_TIME", "",
+										System.currentTimeMillis());
+								System.out
+										.println("Please shut down a subset of the running servers and press any key...");
+								BufferedReader reader = new BufferedReader(
+										new InputStreamReader(System.in));
+								reader.readLine();
+							}
+						}
+
+						if (_opsup > 0) {
+							if (_opsdone == _opsup) {
+								_exporter.write("NODE_UP_OPERATION", "",
+										_opsdone);
+								_exporter.write("NODE_UP_TIME", "",
+										System.currentTimeMillis());
+								System.out
+										.println("Please bring up a subset of the cluster servers and press any key...");
+								BufferedReader reader = new BufferedReader(
+										new InputStreamReader(System.in));
+								reader.readLine();
 							}
 						}
 
@@ -299,7 +334,6 @@ public class Client extends com.yahoo.ycsb.Client {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		String dbname;
 		Properties props = new Properties();
@@ -309,6 +343,7 @@ public class Client extends com.yahoo.ycsb.Client {
 		int target = 0;
 		boolean status = false;
 		String label = "";
+		MeasurementsExporter exporter;
 
 		// parse arguments
 		int argindex = 0;
@@ -412,6 +447,14 @@ public class Client extends com.yahoo.ycsb.Client {
 					System.exit(0);
 				}
 				props.setProperty(OPERATION_DOWN_PROPERTY, args[argindex]);
+				argindex++;
+			} else if (args[argindex].compareTo("-operationup") == 0) {
+				argindex++;
+				if (argindex >= args.length) {
+					usageMessage();
+					System.exit(0);
+				}
+				props.setProperty(OPERATION_UP_PROPERTY, args[argindex]);
 				argindex++;
 			}
 
@@ -520,6 +563,34 @@ public class Client extends com.yahoo.ycsb.Client {
 
 		warningthread.interrupt();
 
+		// if no destination file is provided the results will be written to
+		// stdout
+		OutputStream out;
+		String exportFile = props.getProperty("exportfile");
+		if (exportFile == null) {
+			out = System.out;
+		} else {
+			try {
+				out = new FileOutputStream(exportFile);
+			} catch (FileNotFoundException e) {
+				out = System.out;
+			}
+		}
+
+		// if no exporter is provided the default text one will be used
+		String exporterStr = props
+				.getProperty("exporter",
+						"com.yahoo.ycsb.measurements.exporter.TextMeasurementsExporter");
+		try {
+			exporter = (MeasurementsExporter) Class.forName(exporterStr)
+					.getConstructor(OutputStream.class).newInstance(out);
+		} catch (Exception e) {
+			System.err.println("Could not find exporter " + exporterStr
+					+ ", will use default text reporter.");
+			e.printStackTrace();
+			exporter = new TextMeasurementsExporter(out);
+		}
+
 		// run the workload
 
 		System.err.println("Starting test.");
@@ -549,8 +620,8 @@ public class Client extends com.yahoo.ycsb.Client {
 				System.exit(0);
 			}
 
-			Thread t = getClientThread(db, dotransactions, workload, threadid,
-					threadcount, props, opcount / threadcount,
+			Thread t = getClientThread(exporter, db, dotransactions, workload,
+					threadid, threadcount, props, opcount / threadcount,
 					targetperthreadperms);
 
 			threads.add(t);
@@ -613,7 +684,7 @@ public class Client extends com.yahoo.ycsb.Client {
 		}
 
 		try {
-			exportMeasurements(props, opsDone, en - st);
+			exportMeasurements(exporter, props, opsDone, en - st);
 		} catch (IOException e) {
 			System.err.println("Could not export measurements, error: "
 					+ e.getMessage());
@@ -624,10 +695,28 @@ public class Client extends com.yahoo.ycsb.Client {
 		System.exit(0);
 	}
 
-	static Thread getClientThread(DB db, boolean dotransactions,
-			Workload workload, int threadid, int threadcount, Properties props,
-			int opcount, double targetperthreadperms) {
-		return new Client().new ClientThread(db, dotransactions, workload,
-				threadid, threadcount, props, opcount, targetperthreadperms);
+	protected static void exportMeasurements(MeasurementsExporter exporter,
+			Properties props, int opcount, long runtime) throws IOException {
+		try {
+			exporter.write("OVERALL", "RunTime(ms)", runtime);
+			double throughput = 1000.0 * ((double) opcount)
+					/ ((double) runtime);
+			exporter.write("OVERALL", "Throughput(ops/sec)", throughput);
+
+			Measurements.getMeasurements().exportMeasurements(exporter);
+		} finally {
+			if (exporter != null) {
+				exporter.close();
+			}
+		}
+	}
+
+	static Thread getClientThread(MeasurementsExporter exporter, DB db,
+			boolean dotransactions, Workload workload, int threadid,
+			int threadcount, Properties props, int opcount,
+			double targetperthreadperms) {
+		return new Client().new ClientThread(exporter, db, dotransactions,
+				workload, threadid, threadcount, props, opcount,
+				targetperthreadperms);
 	}
 }
