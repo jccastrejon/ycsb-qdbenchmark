@@ -591,6 +591,12 @@ public class Client extends com.yahoo.ycsb.Client {
 			exporter = new TextMeasurementsExporter(out);
 		}
 
+		try {
+			exporter.write("DB_NAME", dbname, 0);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
 		// run the workload
 
 		System.err.println("Starting test.");
