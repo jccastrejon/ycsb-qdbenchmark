@@ -40,17 +40,19 @@ public class Client extends com.yahoo.ycsb.Client {
 		Vector<Thread> _threads;
 		String _label;
 		boolean _standardstatus;
+		MeasurementsExporter _exporter;
 
 		/**
 		 * The interval for reporting status.
 		 */
-		public static final long sleeptime = 10000;
+		public static final long sleeptime = 1000;
 
-		public StatusThread(Vector<Thread> threads, String label,
-				boolean standardstatus) {
+		public StatusThread(MeasurementsExporter exporter,
+				Vector<Thread> threads, String label, boolean standardstatus) {
 			_threads = threads;
 			_label = label;
 			_standardstatus = standardstatus;
+			_exporter = exporter;
 		}
 
 		/**
@@ -96,27 +98,48 @@ public class Client extends com.yahoo.ycsb.Client {
 				String label = _label + format.format(new Date());
 
 				if (totalops == 0) {
-					System.err.println(label + " " + (interval / 1000)
-							+ " sec: " + totalops + " operations; "
-							+ Measurements.getMeasurements().getSummary());
+					/*
+					 * System.err.println(label + " " + (interval / 1000) +
+					 * " sec: " + totalops + " operations; " +
+					 * Measurements.getMeasurements().getSummary());
+					 */
 				} else {
-					System.err.println(label + " " + (interval / 1000)
-							+ " sec: " + totalops + " operations; "
-							+ d.format(curthroughput) + " current ops/sec; "
-							+ Measurements.getMeasurements().getSummary());
+					try {
+						_exporter.write("STATUS_THROUGHPUT", label + ", "
+								+ (interval / 1000) + " sec: " + totalops
+								+ " operations; " + d.format(curthroughput)
+								+ " current ops/sec; ", 0);
+					} catch (IOException e) {
+					}
+					/*
+					 * System.err.println(label + " " + (interval / 1000) +
+					 * " sec: " + totalops + " operations; " +
+					 * d.format(curthroughput) + " current ops/sec; " +
+					 * Measurements.getMeasurements().getSummary());
+					 */
 				}
 
 				if (_standardstatus) {
 					if (totalops == 0) {
-						System.out.println(label + " " + (interval / 1000)
-								+ " sec: " + totalops + " operations; "
-								+ Measurements.getMeasurements().getSummary());
+						/*
+						 * System.out.println(label + " " + (interval / 1000) +
+						 * " sec: " + totalops + " operations; " +
+						 * Measurements.getMeasurements().getSummary());
+						 */
 					} else {
-						System.out.println(label + " " + (interval / 1000)
-								+ " sec: " + totalops + " operations; "
-								+ d.format(curthroughput)
-								+ " current ops/sec; "
-								+ Measurements.getMeasurements().getSummary());
+						try {
+							_exporter.write("STATUS_THROUGHPUT", label + ", "
+									+ (interval / 1000) + " sec: " + totalops
+									+ " operations; " + d.format(curthroughput)
+									+ " current ops/sec; ", 0);
+						} catch (IOException e) {
+						}
+						/*
+						 * System.out.println(label + " " + (interval / 1000) +
+						 * " sec: " + totalops + " operations; " +
+						 * d.format(curthroughput) + " current ops/sec; " +
+						 * Measurements.getMeasurements().getSummary());
+						 */
 					}
 				}
 
@@ -642,8 +665,8 @@ public class Client extends com.yahoo.ycsb.Client {
 					.compareTo("timeseries") == 0) {
 				standardstatus = true;
 			}
-			statusthread = new Client().new StatusThread(threads, label,
-					standardstatus);
+			statusthread = new Client().new StatusThread(exporter, threads,
+					label, standardstatus);
 			statusthread.start();
 		}
 
