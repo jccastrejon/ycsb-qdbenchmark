@@ -24,8 +24,13 @@ public class CoreWorkload extends com.yahoo.ycsb.workloads.CoreWorkload {
 	@Override
 	public void init(final Properties properties) throws WorkloadException {
 		super.init(properties);
-		operations = OperationGroup.valueOf(properties.getProperty(
-				OPERATIONS_PROPERTY, OperationGroup.KeyOperations.toString()));
+		try {
+			operations = OperationGroup.valueOf(properties.getProperty(
+					OPERATIONS_PROPERTY,
+					OperationGroup.KeyOperations.toString()));
+		} catch (Exception e) {
+			operations = OperationGroup.Traditional;
+		}
 	}
 
 	@Override
@@ -64,6 +69,8 @@ public class CoreWorkload extends com.yahoo.ycsb.workloads.CoreWorkload {
 		} else if (OperationGroup.ConnectionOperations.equals(operations)) {
 			connectionOperations = (ConnectionOperations) db;
 			connectionOperations.read(null);
+		} else {
+			super.doTransactionRead(db);
 		}
 	}
 
@@ -83,6 +90,8 @@ public class CoreWorkload extends com.yahoo.ycsb.workloads.CoreWorkload {
 		} else if (OperationGroup.ConnectionOperations.equals(operations)) {
 			connectionOperations = (ConnectionOperations) db;
 			connectionOperations.update(null, null);
+		} else {
+			super.doTransactionUpdate(db);
 		}
 	}
 
@@ -102,6 +111,8 @@ public class CoreWorkload extends com.yahoo.ycsb.workloads.CoreWorkload {
 		} else if (OperationGroup.ConnectionOperations.equals(operations)) {
 			connectionOperations = (ConnectionOperations) db;
 			connectionOperations.insert(null);
+		} else {
+			super.doTransactionInsert(db);
 		}
 	}
 }

@@ -7,7 +7,7 @@ package fr.imag.qdbenchmark.operations;
  */
 public class OperationType {
 	public enum OperationGroup {
-		AggregateOperations, ConnectionOperations, KeyOperations
+		AggregateOperations, ConnectionOperations, KeyOperations, Traditional
 	}
 
 	public @interface InsertOperation {

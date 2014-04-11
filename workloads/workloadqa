@@ -2,7 +2,7 @@ recordcount=1000
 operationcount=1000
 workload=fr.imag.qdbenchmark.workloads.CoreWorkload
 
-operations=AggregateOperations
+operations=Traditional
 
 readallfields=true
 
